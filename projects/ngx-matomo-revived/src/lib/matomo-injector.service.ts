@@ -50,17 +50,18 @@ export class MatomoInjector {
       }
       switch (this.configuration.trackers.length) {
         case 0:
-          // TODO Throw an error if no tracker has been set.
-          break;
+          throw new Error('No Matomo trackers were specified! At least one is required.');
         case 1:
           const mainTracker = this.configuration.trackers[0];
+          this.validateTracker(mainTracker, 0);
           this.pushOrOverwrite('setTrackerUrl', [mainTracker.trackerUrl]);
           this.pushOrOverwrite('setSiteId', [mainTracker.siteId.toString()]);
         // falls through
         default:
-          this.configuration.trackers
-            .slice(1)
-            .forEach((tracker) => window._paq.push(['addTracker', tracker.trackerUrl, tracker.siteId.toString()]));
+          this.configuration.trackers.slice(1).forEach((tracker, index) => {
+            this.validateTracker(tracker, index + 1);
+            window._paq.push(['addTracker', tracker.trackerUrl, tracker.siteId.toString()]);
+          });
       }
       const script = document.createElement('script');
       script.type = 'text/javascript';
@@ -73,6 +74,22 @@ export class MatomoInjector {
       if (!(e instanceof ReferenceError)) {
         throw e;
       }
+    }
+  }
+
+  /**
+   * Validate, that a tracker contains valid data
+   * @param tracker The tracker to check
+   * @param index The index of the tracker used for the error message
+   */
+  private validateTracker(tracker: MatomoModuleConfiguration['trackers'][0], index: number = 0) {
+    // If the tracker is falsy, it is invalid
+    if (!tracker.trackerUrl) {
+      throw new Error(`Matomo tracker at index ${index} has the invalid url '${tracker.trackerUrl}'`);
+    }
+    // If the site id is nullish, it is invalid
+    if (tracker.siteId == null) {
+      throw new Error(`Matomo tracker at index ${index} has the invalid site id '${tracker.siteId}'`);
     }
   }
 
