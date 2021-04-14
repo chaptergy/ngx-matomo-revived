@@ -8,7 +8,7 @@
 [![devDependencies Status](https://david-dm.org/chaptergy/ngx-matomo-revived/dev-status.svg)](https://david-dm.org/chaptergy/ngx-matomo-revived?type=dev)
 [![peerDependencies Status](https://david-dm.org/chaptergy/ngx-matomo-revived/peer-status.svg)](https://david-dm.org/chaptergy/ngx-matomo-revived?type=peer)
 
-Wrapper for Matomo (aka. Piwik) analytics tracker for applications based on Angular 5, 6, 7 & 8.
+Wrapper for Matomo (aka. Piwik) analytics tracker for applications based on Angular 11.
 This is a fork based on [Arnaud73/ngx-matomo](https://github.com/Arnaud73/ngx-matomo)
 
 ## Installation
@@ -26,7 +26,7 @@ You can add Matomo either via script tag or using the MatomoInjector in your roo
 ### Initialize Matomo via Script Tag
 
 To illustrate the set up, here's the code to inject into your header to initialize Matomo in your application. Matomo's [site](https://developer.matomo.org/guides/tracking-javascript-guide) has the detailed documentation on how to set up communication between Matomo and your application.
-Make sure you replace the MATOMO_URL with your Matomo server. You can remove all the \_paq methods in this script and set them up in your Angular 5+ application.
+Make sure you replace the MATOMO_URL with your Matomo server. You can remove all the \_paq methods in this script and set them up in your Angular application.
 
 ```html
 <!-- Matomo -->
