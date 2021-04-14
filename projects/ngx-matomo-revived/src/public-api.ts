@@ -1,5 +1,5 @@
 /*
- * Public API Surface of ngx-matomo
+ * Public API Surface of ngx-matomo-revived
  */
 
 export * from './lib/matomo-configuration';

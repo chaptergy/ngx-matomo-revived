@@ -1,11 +1,7 @@
 import { NgModule, ModuleWithProviders, Inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 
-import {
-  MATOMO_CONFIGURATION,
-  MatomoModuleConfiguration,
-  defaultConfiguration,
-} from './matomo-configuration';
+import { MATOMO_CONFIGURATION, MatomoModuleConfiguration, defaultConfiguration } from './matomo-configuration';
 import { MatomoInjector } from './matomo-injector.service';
 import { MatomoTracker } from './matomo-tracker.service';
 
@@ -28,7 +24,7 @@ export class MatomoModule {
   constructor(@Inject(PLATFORM_ID) private platformId, private matomoInjector: MatomoInjector) {
     // Warn if module is not being loaded by a browser.
     if (!isPlatformBrowser(this.platformId)) {
-      console.warn(`ngx-Matomo does not support server platform`);
+      console.warn(`ngx-matomo-revived does not support server platform`);
     }
     // Inject the Matomo script and create trackers.
     this.matomoInjector.init();
@@ -43,9 +39,7 @@ export class MatomoModule {
       providers: [
         {
           provide: MATOMO_CONFIGURATION,
-          useValue: !!configuration
-            ? { ...defaultConfiguration, ...configuration }
-            : defaultConfiguration,
+          useValue: !!configuration ? { ...defaultConfiguration, ...configuration } : defaultConfiguration,
         },
         MatomoTracker,
       ],

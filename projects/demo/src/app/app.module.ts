@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { MatomoModule } from 'ngx-matomo';
+import { MatomoModule } from 'ngx-matomo-revived';
 
 import { AppComponent } from './app.component';
 
@@ -8,6 +8,6 @@ import { AppComponent } from './app.component';
   declarations: [AppComponent],
   imports: [BrowserModule, MatomoModule],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
 export class AppModule {}

@@ -1,4 +1,4 @@
-# ngx-Matomo 
+# ngx-matomo-revived
 
 [![Build Status](https://travis-ci.com/Arnaud73/ngx-matomo.svg?branch=master)](https://travis-ci.com/Arnaud73/ngx-matomo)
 [![NPM version](https://img.shields.io/npm/v/ngx-matomo.svg)](https://www.npmjs.com/package/ngx-matomo)
@@ -10,15 +10,12 @@
 [![peerDependencies Status](https://david-dm.org/Arnaud73/ngx-matomo/peer-status.svg)](https://david-dm.org/Arnaud73/ngx-matomo?type=peer)
 
 Wrapper for Matomo (aka. Piwik) analytics tracker for applications based on Angular 5, 6, 7 & 8.
-
-## Warning
-
-This new release of ngx-Matomo has been rebuilt with Angular CLI v8. As a result, the produced library uses Angular Package Format (APF) v8. It has been tested with an Angular 6 application, but if your Angular 5, 6 or 7 application is running into trouble, please log an issue on GitHub.
+This is a fork based on [Arnaud73/ngx-matomo](https://github.com/Arnaud73/ngx-matomo)
 
 ## Installation
 
 Use `npm` or `yarn` to add the module to your current project:
-```npm install --save ngx-matomo```
+```npm install --save ngx-matomo-revived```
 
 ## Adding Matomo into to your Angular application
 
@@ -52,7 +49,7 @@ To enable Matomo via your root component you can now inject the MatomoInjector i
 
 ```ts
 import { Component } from '@angular/core';
-import { MatomoInjector } from 'ngx-matomo';
+import { MatomoInjector } from 'ngx-matomo-revived';
 
 @Component({
   selector: 'app',
@@ -74,7 +71,7 @@ Bootrapping this application is easy. Import ```MatomoModule``` into your root `
 ```ts
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { MatomoModule } from 'ngx-matomo';
+import { MatomoModule } from 'ngx-matomo-revived';
 
 import { AppComponent } from './app.component';
 
@@ -94,7 +91,7 @@ Once that's done you can import ```MatomoTracker``` into any component in your a
 ```ts
 // component
 import { Component } from '@angular/core';
-import { MatomoTracker } from 'ngx-matomo';
+import { MatomoTracker } from 'ngx-matomo-revived';
 
 @Component({
   selector: 'app',
@@ -107,7 +104,7 @@ export class AppComponent {
 
   ngOnInit() {
     this.matomoTracker.setUserId('UserId');
-    this.matomoTracker.setDocumentTitle('ngx-Matomo Test');
+    this.matomoTracker.setDocumentTitle('ngx-matomo-revived Test');
   }
 }
 ```
@@ -123,7 +120,7 @@ For now tracking events and actions is manual and is not injected into the html.
 ```ts
 // component
 import { Component } from '@angular/core';
-import { MatomoTracker } from 'ngx-matomo';
+import { MatomoTracker } from 'ngx-matomo-revived';
 
 @Component({
   selector: 'app',

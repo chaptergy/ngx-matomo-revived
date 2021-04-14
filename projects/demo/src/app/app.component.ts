@@ -1,5 +1,5 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
-import { MatomoTracker, MatomoInjector } from 'ngx-matomo';
+import { MatomoTracker, MatomoInjector } from 'ngx-matomo-revived';
 
 /**
  * Main component of the demo application.
@@ -7,7 +7,7 @@ import { MatomoTracker, MatomoInjector } from 'ngx-matomo';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.css'],
 })
 export class AppComponent implements OnInit, AfterViewInit {
   /**
@@ -17,11 +17,7 @@ export class AppComponent implements OnInit, AfterViewInit {
    * @param matomoTracker Instance of MatomoTracker provided by DI.
    */
   constructor(private matomoInjector: MatomoInjector, private matomoTracker: MatomoTracker) {
-    this.matomoInjector.init(
-      'http://ngx.matomo.cloud/',
-      1,
-      '//cdn.matomo.cloud/ngx.matomo.cloud/matomo.js'
-    );
+    this.matomoInjector.init('http://ngx.matomo.cloud/', 1, '//cdn.matomo.cloud/ngx.matomo.cloud/matomo.js');
   }
 
   /**
@@ -29,7 +25,7 @@ export class AppComponent implements OnInit, AfterViewInit {
    */
   ngOnInit() {
     this.matomoTracker.setUserId('UserId');
-    this.matomoTracker.setDocumentTitle('ngx-Matomo Test');
+    this.matomoTracker.setDocumentTitle('ngx-matomo-revived Test');
   }
 
   /**
@@ -40,14 +36,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.matomoTracker.trackEvent('category', 'action', 'name', 1);
 
     this.matomoTracker.getUserId().then((userId: string) => console.log('User ID:', userId));
-    this.matomoTracker
-      .getVisitorId()
-      .then((visitorId: string) => console.log('Visitor ID:', visitorId));
-    this.matomoTracker
-      .getVisitorInfo()
-      .then((visitorInfo: string[]) => console.log('Visitor Info:', visitorInfo));
-    this.matomoTracker
-      .hasCookies()
-      .then((hasCookies: boolean) => console.log('Has Cookies:', hasCookies));
+    this.matomoTracker.getVisitorId().then((visitorId: string) => console.log('Visitor ID:', visitorId));
+    this.matomoTracker.getVisitorInfo().then((visitorInfo: string[]) => console.log('Visitor Info:', visitorInfo));
+    this.matomoTracker.hasCookies().then((hasCookies: boolean) => console.log('Has Cookies:', hasCookies));
   }
 }

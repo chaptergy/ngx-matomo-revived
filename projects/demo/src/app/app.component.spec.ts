@@ -1,12 +1,12 @@
 import { TestBed, async } from '@angular/core/testing';
 import { AppComponent } from './app.component';
-import { MatomoModule } from 'ngx-matomo';
+import { MatomoModule } from 'ngx-matomo-revived';
 
 describe('Demo App', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [MatomoModule],
-      declarations: [AppComponent]
+      declarations: [AppComponent],
     }).compileComponents();
   }));
 

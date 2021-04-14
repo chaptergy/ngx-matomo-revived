@@ -3,38 +3,38 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "ngx-matomo": {
+    "ngx-matomo-revived": {
       "projectType": "library",
-      "root": "projects/ngx-matomo",
-      "sourceRoot": "projects/ngx-matomo/src",
+      "root": "projects/ngx-matomo-revived",
+      "sourceRoot": "projects/ngx-matomo-revived/src",
       "prefix": "mat",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-ng-packagr:build",
           "options": {
-            "tsConfig": "projects/ngx-matomo/tsconfig.lib.json",
-            "project": "projects/ngx-matomo/ng-package.json"
+            "tsConfig": "projects/ngx-matomo-revived/tsconfig.lib.json",
+            "project": "projects/ngx-matomo-revived/ng-package.json"
           },
           "configurations": {
             "production": {
-              "tsConfig": "projects/ngx-matomo/tsconfig.lib.prod.json"
+              "tsConfig": "projects/ngx-matomo-revived/tsconfig.lib.prod.json"
             }
           }
         },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "main": "projects/ngx-matomo/src/test.ts",
-            "tsConfig": "projects/ngx-matomo/tsconfig.spec.json",
-            "karmaConfig": "projects/ngx-matomo/karma.conf.js"
+            "main": "projects/ngx-matomo-revived/src/test.ts",
+            "tsConfig": "projects/ngx-matomo-revived/tsconfig.spec.json",
+            "karmaConfig": "projects/ngx-matomo-revived/karma.conf.js"
           }
         },
         "lint": {
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
             "tsConfig": [
-              "projects/ngx-matomo/tsconfig.lib.json",
-              "projects/ngx-matomo/tsconfig.spec.json"
+              "projects/ngx-matomo-revived/tsconfig.lib.json",
+              "projects/ngx-matomo-revived/tsconfig.spec.json"
             ],
             "exclude": ["**/node_modules/**"]
           }
@@ -151,5 +151,5 @@
     "packageManager": "npm",
     "analytics": "9a3310eb-5121-4213-ab87-6fac0fc74d6f"
   },
-  "defaultProject": "ngx-matomo"
+  "defaultProject": "ngx-matomo-revived"
 }

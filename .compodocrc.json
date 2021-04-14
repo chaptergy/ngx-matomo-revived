@@ -1,5 +1,5 @@
 {
-  "tsconfig": "./projects/ngx-matomo/tsconfig.lib.json",
+  "tsconfig": "./projects/ngx-matomo-revived/tsconfig.lib.json",
   "output": "./docs",
   "disableSourceCode": true,
   "disableCoverage": true,
