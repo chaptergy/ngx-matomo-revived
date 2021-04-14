@@ -1,12 +1,7 @@
 # ngx-matomo-revived
 
-[![Build Status](https://travis-ci.com/chaptergy/ngx-matomo-revived.svg?branch=master)](https://travis-ci.com/chaptergy/ngx-matomo-revived)
 [![NPM version](https://img.shields.io/npm/v/ngx-matomo-revived.svg)](https://www.npmjs.com/package/ngx-matomo-revived)
-[![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
 [![MIT license](http://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
-[![dependencies Status](https://david-dm.org/chaptergy/ngx-matomo-revived/status.svg)](https://david-dm.org/chaptergy/ngx-matomo-revived)
-[![devDependencies Status](https://david-dm.org/chaptergy/ngx-matomo-revived/dev-status.svg)](https://david-dm.org/chaptergy/ngx-matomo-revived?type=dev)
-[![peerDependencies Status](https://david-dm.org/chaptergy/ngx-matomo-revived/peer-status.svg)](https://david-dm.org/chaptergy/ngx-matomo-revived?type=peer)
 
 Wrapper for Matomo (aka. Piwik) analytics tracker for applications based on Angular 11.
 This is a fork based on [Arnaud73/ngx-matomo](https://github.com/Arnaud73/ngx-matomo)
@@ -23,32 +18,29 @@ npm install --save ngx-matomo-revived
 
 You can add Matomo either via script tag or using the MatomoInjector in your root component.
 
-### Initialize Matomo via Script Tag
+### Using the MatomoInjector
 
-To illustrate the set up, here's the code to inject into your header to initialize Matomo in your application. Matomo's [site](https://developer.matomo.org/guides/tracking-javascript-guide) has the detailed documentation on how to set up communication between Matomo and your application.
-Make sure you replace the MATOMO_URL with your Matomo server. You can remove all the \_paq methods in this script and set them up in your Angular application.
+#### Include it in your application
 
-```html
-<!-- Matomo -->
-<script type="text/javascript">
-  var _paq = _paq || [];
-  _paq.push(['trackPageView']);
-  _paq.push(['enableLinkTracking']);
-  (function () {
-    var u = '//{$MATOMO_URL}/';
-    _paq.push(['setTrackerUrl', u + 'matomo.php']);
-    _paq.push(['setSiteId', { $IDSITE }]);
-    var d = document,
-      g = d.createElement('script'),
-      s = d.getElementsByTagName('script')[0];
-    g.type = 'text/javascript';
-    g.async = true;
-    g.defer = true;
-    g.src = u + 'matomo.js';
-    s.parentNode.insertBefore(g, s);
-  })();
-</script>
-<!-- End Matomo Code -->
+Bootrapping this application is easy. Import `MatomoModule` into your root `NgModule`.
+
+```ts
+...
+import { MatomoModule, MatomoModuleConfiguration, MATOMO_CONFIGURATION } from 'ngx-matomo-revived';
+
+@NgModule({
+  ...
+  imports: [MatomoModule, ...],
+  providers: [
+    {
+      provide: MATOMO_CONFIGURATION,
+      useValue: {
+        trackers: [{ siteId: YOUR_SITE_ID, trackerUrl: YOUR_MATOMO_URL }],
+      } as MatomoModuleConfiguration,
+    },
+  ],
+})
+export class AppModule {}
 ```
 
 ### Initialize Matomo via root component and MatomoInjector service
@@ -65,28 +57,9 @@ import { MatomoInjector } from 'ngx-matomo-revived';
 })
 export class AppComponent {
   constructor(private matomoInjector: MatomoInjector) {
-    this.matomoInjector.init('YOUR_MATOMO_URL', YOUR_SITE_ID);
+    this.matomoInjector.init();
   }
 }
-```
-
-## Include it in your application
-
-Bootrapping this application is easy. Import `MatomoModule` into your root `NgModule`.
-
-```ts
-import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
-import { MatomoModule } from 'ngx-matomo-revived';
-
-import { AppComponent } from './app.component';
-
-@NgModule({
-  imports: [BrowserModule, MatomoModule],
-  declarations: [AppComponent],
-  bootstrap: [AppComponent],
-})
-export class AppModule {}
 ```
 
 Once that's done you can import `MatomoTracker` into any component in your application.
@@ -106,6 +79,59 @@ export class AppComponent {
   ngOnInit() {
     this.matomoTracker.setUserId('UserId');
     this.matomoTracker.setDocumentTitle('ngx-matomo-revived Test');
+  }
+}
+```
+
+### Initialize Matomo via Script Tag
+
+To illustrate the set up, here's the code to inject into your header to initialize Matomo in your application. Matomo's [site](https://developer.matomo.org/guides/tracking-javascript-guide) has the detailed documentation on how to set up communication between Matomo and your application.
+Make sure you replace the $MATOMO_URL with your Matomo server and $SITE_ID with your site id.
+
+```html
+<!-- Matomo -->
+<script type="text/javascript">
+  var _paq = _paq || [];
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  (function () {
+    var u = '//$MATOMO_URL/';
+    _paq.push(['setTrackerUrl', u + 'matomo.php']);
+    _paq.push(['setSiteId', $SIE_ID]);
+    var d = document,
+      g = d.createElement('script'),
+      s = d.getElementsByTagName('script')[0];
+    g.type = 'text/javascript';
+    g.async = true;
+    g.defer = true;
+    g.src = u + 'matomo.js';
+    s.parentNode.insertBefore(g, s);
+  })();
+</script>
+<!-- End Matomo Code -->
+```
+
+## Tracking pages
+
+To track pages automatically use the following code snippet in your `app.component.ts`:
+
+```ts
+...
+export class AppComponent {
+
+  constructor(
+    private matomoTracker: MatomoTracker,
+    private matomoInjector: MatomoInjector,
+    private router: Router,
+  ) {
+    this.matomoInjector.init();
+    this.router.events.subscribe((val) => {
+      if (val instanceof NavigationEnd) {
+        this.matomoTracker.setCustomUrl(val.urlAfterRedirects);
+        this.matomoTracker.trackPageView();
+        this.matomoTracker.setReferrerUrl(val.urlAfterRedirects);
+      }
+    });
   }
 }
 ```
