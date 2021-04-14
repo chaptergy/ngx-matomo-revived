@@ -33,7 +33,7 @@ export interface MatomoModuleConfiguration {
 /**
  * Injection token for Matomo configuration.
  */
-export const MATOMO_CONFIGURATION = new InjectionToken<string>('MATOMO_CONFIGURATION');
+export const MATOMO_CONFIGURATION = new InjectionToken<MatomoModuleConfiguration>('MATOMO_CONFIGURATION');
 
 /**
  * Default configuration for the Matomo module.

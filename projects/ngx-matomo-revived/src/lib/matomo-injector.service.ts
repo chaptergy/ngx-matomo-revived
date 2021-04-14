@@ -21,9 +21,7 @@ export class MatomoInjector {
    *
    * @param configuration Matomo configuration provided by DI.
    */
-  constructor(
-    @Inject(MATOMO_CONFIGURATION) private readonly configuration: MatomoModuleConfiguration
-  ) {
+  constructor(@Inject(MATOMO_CONFIGURATION) private readonly configuration: MatomoModuleConfiguration) {
     try {
       window._paq = window._paq || [];
     } catch (e) {
@@ -43,14 +41,9 @@ export class MatomoInjector {
       }
       if (this.configuration?.trackAppStarting === true) {
         window._paq.push(['trackPageView']);
-        if (
-          this.configuration?.enableLinkTracking === true
-        ) {
+        if (this.configuration?.enableLinkTracking === true) {
           setTimeout(() => {
-            window._paq.push([
-              'enableLinkTracking',
-              this.configuration?.enableLinkTrackingValue ?? false,
-            ]);
+            window._paq.push(['enableLinkTracking', this.configuration?.enableLinkTrackingValue ?? false]);
           }, 0);
         }
       }
@@ -66,9 +59,7 @@ export class MatomoInjector {
         default:
           this.configuration.trackers
             .slice(1)
-            .forEach((tracker) =>
-              window._paq.push(['addTracker', tracker.trackerUrl, tracker.siteId.toString()])
-            );
+            .forEach((tracker) => window._paq.push(['addTracker', tracker.trackerUrl, tracker.siteId.toString()]));
       }
       const script = document.createElement('script');
       script.type = 'text/javascript';

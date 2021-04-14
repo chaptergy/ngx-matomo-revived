@@ -13,7 +13,7 @@
     "target": "es2015",
     "lib": ["es2018", "dom"],
     "paths": {
-      "ngx-matomo": ["dist/ngx-matomo/ngx-matomo", "dist/ngx-matomo"]
+      "ngx-matomo-revived": ["dist/ngx-matomo-revived/ngx-matomo-revived", "dist/ngx-matomo-revived"]
     }
   },
   "angularCompilerOptions": {
