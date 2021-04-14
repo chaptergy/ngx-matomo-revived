@@ -1,14 +1,25 @@
-import { TestBed, async } from '@angular/core/testing';
+import { TestBed, waitForAsync } from '@angular/core/testing';
 import { AppComponent } from './app.component';
-import { MatomoModule } from 'ngx-matomo';
+import { MatomoModule, MATOMO_CONFIGURATION } from 'ngx-matomo-revived';
 
 describe('Demo App', () => {
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      imports: [MatomoModule],
-      declarations: [AppComponent]
-    }).compileComponents();
-  }));
+  beforeEach(
+    waitForAsync(() => {
+      TestBed.overrideProvider(MATOMO_CONFIGURATION, {
+        useValue: {
+          trackAppStarting: true,
+          isConsentRequired: false,
+          enableLinkTracking: true,
+          enableLinkTrackingValue: false,
+          trackers: [],
+        },
+      });
+      TestBed.configureTestingModule({
+        imports: [MatomoModule],
+        declarations: [AppComponent],
+      }).compileComponents();
+    })
+  );
 
   it('should create the app', () => {
     const fixture = TestBed.createComponent(AppComponent);

@@ -10,6 +10,11 @@ declare var window: {
 };
 
 /**
+ * Matomo scope
+ */
+type MatomoScope = 'page' | 'visit' | 'event';
+
+/**
  * Wrapper for functions available in the Matomo Javascript tracker.
  *
  * @export
@@ -127,7 +132,7 @@ export class MatomoTracker {
    * @param url Full URL which is to be tracked as a click.
    * @param linkType Either 'link' for an outlink or 'download' for a download.
    */
-  trackLink(url: string, linkType: string): void {
+  trackLink(url: string, linkType: 'link' | 'download'): void {
     try {
       window._paq.push(['trackLink', url, linkType]);
     } catch (e) {
@@ -238,13 +243,7 @@ export class MatomoTracker {
     contentTarget: string
   ): void {
     try {
-      window._paq.push([
-        'trackContentInteraction',
-        contentInteraction,
-        contentName,
-        contentPiece,
-        contentTarget
-      ]);
+      window._paq.push(['trackContentInteraction', contentInteraction, contentName, contentPiece, contentTarget]);
     } catch (e) {
       if (!(e instanceof ReferenceError)) {
         throw e;
@@ -253,7 +252,8 @@ export class MatomoTracker {
   }
 
   /**
-   * Logs all found content blocks within a page to the console. This is useful to debug / test content tracking.
+   * Logs all found content blocks within a page to the console.<br />
+   * This is useful to debug / test content tracking.
    */
   logAllContentBlocksOnPage(): void {
     try {
@@ -266,7 +266,7 @@ export class MatomoTracker {
   }
 
   /**
-   * Install a Heart beat timer that will regularly send requests to Matomo in order to better measure the time spent on the page.<br />
+   * Installs a Heart beat timer that will regularly send requests to Matomo in order to better measure the time spent on the page.<br />
    * These requests will be sent only when the user is actively viewing the page (when the tab is active and in focus).<br />
    * These requests will not track additional actions or page views.<br />
    * By default, the delay is set to 15 seconds.
@@ -286,13 +286,13 @@ export class MatomoTracker {
   /**
    * Installs link tracking on all applicable link elements.
    *
-   * @param enable Set the enable parameter to true to use pseudo click-handler (treat middle click and open contextmenu as
+   * @param [enable=false] Set to true to use pseudo click-handler (treat middle click and open contextmenu as
    * left click).<br />
    * A right click (or any click that opens the context menu) on a link will be tracked as clicked even if "Open in new tab"
    * is not selected.<br />
-   * If "false" (default), nothing will be tracked on open context menu or middle click.
+   * If false (default), nothing will be tracked on open context menu or middle click.
    */
-  enableLinkTracking(enable: boolean): void {
+  enableLinkTracking(enable: boolean = false): void {
     try {
       window._paq.push(['enableLinkTracking', enable]);
     } catch (e) {
@@ -324,10 +324,11 @@ export class MatomoTracker {
   }
 
   /**
+   * Sets the cross domain linking timeout.<br />
    * By default, the two visits across domains will be linked together when the link is clicked and the page is loaded within
    * a 180 seconds timeout window.
    *
-   * @param timeout Timeout, in seconds, between two actions across two domanes before creating a new visit.
+   * @param timeout Timeout, in seconds, between two actions across two domains before creating a new visit.
    * @see {@link https://matomo.org/faq/how-to/faq_23654/|Cross Domain Linking}
    */
   setCrossDomainLinkingTimeout(timeout: number): void {
@@ -338,6 +339,29 @@ export class MatomoTracker {
         throw e;
       }
     }
+  }
+
+  /**
+   * Returns the query parameter to append to links to handle cross domain linking.<br />
+   * Use this to add cross domain support for links that are added to the DOM dynamically.
+   *
+   * @returns Promise for the `pk_vid` query parameter.
+   * @see {@link https://matomo.org/faq/how-to/faq_23654/|Cross Domain Linking}
+   */
+  getCrossDomainLinkingUrlParameter(): Promise<string> {
+    return new Promise((resolve, reject) => {
+      try {
+        window._paq.push([
+          function () {
+            resolve(this.getCrossDomainLinkingUrlParameter());
+          },
+        ]);
+      } catch (e) {
+        if (!(e instanceof ReferenceError)) {
+          reject(e);
+        }
+      }
+    });
   }
 
   /**
@@ -420,8 +444,8 @@ export class MatomoTracker {
   }
 
   /**
-   * Specify the Matomo HTTP API URL endpoint. Points to the root directory of matomo,
-   * e.g. http://matomo.example.org/ or https://example.org/matomo/.<br />
+   * Specifies the Matomo HTTP API URL endpoint.<br />
+   * Points to the root directory of Matomo, e.g. http://matomo.example.org/ or https://example.org/matomo/.<br />
    * This function is only useful when the 'Overlay' report is not working.<br />
    * By default, you do not need to use this function.
    *
@@ -462,9 +486,9 @@ export class MatomoTracker {
     return new Promise((resolve, reject) => {
       try {
         window._paq.push([
-          function() {
+          function () {
             resolve(this.getPiwikUrl());
-          }
+          },
         ]);
       } catch (e) {
         if (!(e instanceof ReferenceError)) {
@@ -484,9 +508,9 @@ export class MatomoTracker {
     return new Promise((resolve, reject) => {
       try {
         window._paq.push([
-          function() {
+          function () {
             resolve(this.getCurrentUrl());
-          }
+          },
         ]);
       } catch (e) {
         if (!(e instanceof ReferenceError)) {
@@ -512,7 +536,7 @@ export class MatomoTracker {
   }
 
   /**
-   * Sets list of file extensions to be recognized as downloads.<br />
+   * Sets file extensions to be recognized as downloads.<br />
    * Example: `'docx'` or `['docx', 'xlsx']`.
    *
    * @param extensions Extension, or list of extensions to be recognized as downloads.
@@ -544,7 +568,7 @@ export class MatomoTracker {
   }
 
   /**
-   * Sets file extensions to be removed from the list of download file extensions.<br />
+   * Specifies file extensions to be removed from the list of download file extensions.<br />
    * Example: `'docx'` or `['docx', 'xlsx']`.
    *
    * @param extensions Extension, or list of extensions not to be recognized as downloads.
@@ -575,7 +599,7 @@ export class MatomoTracker {
   }
 
   /**
-   * Set classes to be treated as outlinks (in addition to piwik_link).
+   * Sets classes to be treated as outlinks (in addition to piwik_link).
    *
    * @param classes Class, or list of classes to be treated as outlinks.
    */
@@ -590,7 +614,7 @@ export class MatomoTracker {
   }
 
   /**
-   * Set delay for link tracking (in milliseconds).
+   * Sets delay for link tracking (in milliseconds).
    *
    * @param delay Delay, in milliseconds, for link tracking.
    */
@@ -613,9 +637,9 @@ export class MatomoTracker {
     return new Promise((resolve, reject) => {
       try {
         window._paq.push([
-          function() {
+          function () {
             resolve(this.getLinkTrackingTimer());
-          }
+          },
         ]);
       } catch (e) {
         if (!(e instanceof ReferenceError)) {
@@ -626,7 +650,7 @@ export class MatomoTracker {
   }
 
   /**
-   * Set to true to not record the hash tag (anchor) portion of URLs.
+   * Sets if or not to record the hash tag (anchor) portion of URLs.
    *
    * @param value If true, the hash tag portion of the URLs won't be recorded.
    */
@@ -672,7 +696,7 @@ export class MatomoTracker {
   }
 
   /**
-   * Set to true to not track users who opt out of tracking using Mozilla's (proposed) Do Not Track setting.
+   * Sets if to not to track users who opt out of tracking using Mozilla's (proposed) Do Not Track setting.
    *
    * @param doNotTrack If true, users who opted for Do Not Track in their settings won't be tracked.
    * @see {@link https://www.w3.org/TR/tracking-dnt/}
@@ -722,10 +746,28 @@ export class MatomoTracker {
    *
    * @param minimumVisitLength Duration before notifying the server for the duration of the visit to a page.
    * @param heartBeatDelay Delay, in seconds, between two updates to the server.
+   * @see {@link https://developer.matomo.org/guides/tracking-javascript-guide#accurately-measure-the-time-spent-on-each-page}
    */
   setHeartBeatTimer(minimumVisitLength: number, heartBeatDelay: number): void {
     try {
       window._paq.push(['setHeartBeatTimer', minimumVisitLength, heartBeatDelay]);
+    } catch (e) {
+      if (!(e instanceof ReferenceError)) {
+        throw e;
+      }
+    }
+  }
+
+  /**
+   * Sends a ping request.<br />
+   * Ping requests do not track new actions.
+   * If they are sent within the standard visit length, they will extend the existing visit and the current last action for the visit.
+   * If sent after the standard visit length, ping requests will create a new visit using the last action in the last known visit.<br />
+   * See also enableHeartBeatTimer.
+   */
+  ping() {
+    try {
+      window._paq.push(['ping']);
     } catch (e) {
       if (!(e instanceof ReferenceError)) {
         throw e;
@@ -742,9 +784,9 @@ export class MatomoTracker {
     return new Promise((resolve, reject) => {
       try {
         window._paq.push([
-          function() {
+          function () {
             resolve(this.getVisitorId());
-          }
+          },
         ]);
       } catch (e) {
         if (!(e instanceof ReferenceError)) {
@@ -763,9 +805,9 @@ export class MatomoTracker {
     return new Promise((resolve, reject) => {
       try {
         window._paq.push([
-          function() {
+          function () {
             resolve(this.getVisitorInfo());
-          }
+          },
         ]);
       } catch (e) {
         if (!(e instanceof ReferenceError)) {
@@ -786,9 +828,9 @@ export class MatomoTracker {
     return new Promise((resolve, reject) => {
       try {
         window._paq.push([
-          function() {
+          function () {
             resolve(this.getAttributionInfo());
-          }
+          },
         ]);
       } catch (e) {
         if (!(e instanceof ReferenceError)) {
@@ -807,9 +849,9 @@ export class MatomoTracker {
     return new Promise((resolve, reject) => {
       try {
         window._paq.push([
-          function() {
+          function () {
             resolve(this.getAttributionCampaignName());
-          }
+          },
         ]);
       } catch (e) {
         if (!(e instanceof ReferenceError)) {
@@ -828,9 +870,9 @@ export class MatomoTracker {
     return new Promise((resolve, reject) => {
       try {
         window._paq.push([
-          function() {
+          function () {
             resolve(this.getAttributionCampaignKeyword());
-          }
+          },
         ]);
       } catch (e) {
         if (!(e instanceof ReferenceError)) {
@@ -849,9 +891,9 @@ export class MatomoTracker {
     return new Promise((resolve, reject) => {
       try {
         window._paq.push([
-          function() {
+          function () {
             resolve(this.getAttributionReferrerTimestamp());
-          }
+          },
         ]);
       } catch (e) {
         if (!(e instanceof ReferenceError)) {
@@ -870,9 +912,9 @@ export class MatomoTracker {
     return new Promise((resolve, reject) => {
       try {
         window._paq.push([
-          function() {
+          function () {
             resolve(this.getAttributionReferrerUrl());
-          }
+          },
         ]);
       } catch (e) {
         if (!(e instanceof ReferenceError)) {
@@ -892,9 +934,9 @@ export class MatomoTracker {
     return new Promise((resolve, reject) => {
       try {
         window._paq.push([
-          function() {
+          function () {
             resolve(this.getUserId());
-          }
+          },
         ]);
       } catch (e) {
         if (!(e instanceof ReferenceError)) {
@@ -942,11 +984,12 @@ export class MatomoTracker {
    * @param name Name, the name of the variable, for example: Category, Sub-category, UserType.
    * @param value Value, for example: "Sports", "News", "World", "Business"…
    * @param scope Scope of the custom variable:<br />
-   * - "page" means the custom variable applies to the current page view.
-   * - "visit" means the custom variable applies to the current visitor.
+   * - 'page' means the custom variable applies to the current page view.
+   * - 'visit' means the custom variable applies to the current visitor.
+   * - 'event' means the custom variable applies to the current event.
    * @see {@link https://matomo.org/docs/custom-variables/|Custom Variables}
    */
-  setCustomVariable(index: number, name: string, value: string, scope: string): void {
+  setCustomVariable(index: number, name: string, value: string, scope: MatomoScope): void {
     try {
       window._paq.push(['setCustomVariable', index, name, value, scope]);
     } catch (e) {
@@ -963,7 +1006,7 @@ export class MatomoTracker {
    * @param scope Scope of the custom variable to delete.
    * @see {@link https://matomo.org/docs/custom-variables/|Custom Variables}
    */
-  deleteCustomVariable(index: number, scope: string): void {
+  deleteCustomVariable(index: number, scope: MatomoScope): void {
     try {
       window._paq.push(['deleteCustomVariable', index, scope]);
     } catch (e) {
@@ -979,7 +1022,7 @@ export class MatomoTracker {
    * @param scope Scope of the custom variables to delete.
    * @see {@link https://matomo.org/docs/custom-variables/|Custom Variables}
    */
-  deleteCustomVariables(scope: string): void {
+  deleteCustomVariables(scope: MatomoScope): void {
     try {
       window._paq.push(['deleteCustomVariables', scope]);
     } catch (e) {
@@ -997,13 +1040,13 @@ export class MatomoTracker {
    * @returns Promise for the value of custom variable.
    * @see {@link https://matomo.org/docs/custom-variables/|Custom Variables}
    */
-  getCustomVariable(index: number, scope: string): Promise<string> {
+  getCustomVariable(index: number, scope: MatomoScope): Promise<string> {
     return new Promise((resolve, reject) => {
       try {
         window._paq.push([
-          function() {
+          function () {
             resolve(this.getCustomVariable(index, scope));
-          }
+          },
         ]);
       } catch (e) {
         if (!(e instanceof ReferenceError)) {
@@ -1014,7 +1057,7 @@ export class MatomoTracker {
   }
 
   /**
-   * When called then the Custom Variables of scope "visit" will be stored (persisted) in a first party cookie
+   * When called then the Custom Variables of scope 'visit' will be stored (persisted) in a first party cookie
    * for the duration of the visit.<br />
    * This is useful if you want to call getCustomVariable later in the visit.<br />
    * (by default custom variables are not stored on the visitor's computer.)
@@ -1078,9 +1121,9 @@ export class MatomoTracker {
     return new Promise((resolve, reject) => {
       try {
         window._paq.push([
-          function() {
+          function () {
             resolve(this.getCustomDimension(customDimensionId));
-          }
+          },
         ]);
       } catch (e) {
         if (!(e instanceof ReferenceError)) {
@@ -1123,7 +1166,7 @@ export class MatomoTracker {
   }
 
   /**
-   * Set to true to attribute a conversion to the first referrer.<br />
+   * Sets if or not to attribute a conversion to the first referrer.<br />
    * By default, conversion is attributed to the most recent referrer.
    *
    * @param conversionToFirstReferrer If true, Matomo will attribute the Goal conversion to the first referrer used
@@ -1150,12 +1193,7 @@ export class MatomoTracker {
    * @param productCategory Category of the viewed product.
    * @param price Price of the viewed product.
    */
-  setEcommerceView(
-    productSKU: string,
-    productName: string,
-    productCategory: string,
-    price: number
-  ): void {
+  setEcommerceView(productSKU: string, productName: string, productCategory: string, price: number): void {
     try {
       window._paq.push(['setEcommerceView', productSKU, productName, productCategory, price]);
     } catch (e) {
@@ -1205,8 +1243,68 @@ export class MatomoTracker {
   }
 
   /**
+   * Removes the specified product from the untracked ecommerce order.
+   *
+   * @param productSKU SKU of the product to remove.
+   */
+  removeEcommerceItem(productSKU: string): void {
+    try {
+      const args: any[] = [productSKU];
+      window._paq.push(['removeEcommerceItem', ...args]);
+    } catch (e) {
+      if (!(e instanceof ReferenceError)) {
+        throw e;
+      }
+    }
+  }
+
+  /**
+   * Removes all products in the untracked ecommerce order.<br />
+   * Note: this is done automatically after trackEcommerceOrder() is called.
+   */
+  clearEcommerceCart() {
+    try {
+      window._paq.push(['clearEcommerceCart']);
+    } catch (e) {
+      if (!(e instanceof ReferenceError)) {
+        throw e;
+      }
+    }
+  }
+
+  /**
+   * Returns all ecommerce items currently in the untracked ecommerce order.
+   * The returned array will be a copy, so changing it won't affect the ecommerce order.<br />
+   * To affect what gets tracked, use the addEcommerceItem()/removeEcommerceItem()/clearEcommerceCart() methods.<br />
+   * Use this method to see what will be tracked before you track an order or cart update.
+   */
+  getEcommerceItems(): Promise<
+    Array<{
+      productSKU: string;
+      productName?: string;
+      productCategory?: string;
+      price?: number;
+      quantity?: number;
+    }>
+  > {
+    return new Promise((resolve, reject) => {
+      try {
+        window._paq.push([
+          function () {
+            resolve(this.getEcommerceItems());
+          },
+        ]);
+      } catch (e) {
+        if (!(e instanceof ReferenceError)) {
+          reject(e);
+        }
+      }
+    });
+  }
+
+  /**
    * Tracks a shopping cart.<br />
-   * Call this javascript function every time a user is adding, updating or deleting a product from the cart.
+   * Call this function every time a user is adding, updating or deleting a product from the cart.
    *
    * @param grandTotal Grand total of the shopping cart.
    */
@@ -1262,6 +1360,64 @@ export class MatomoTracker {
   }
 
   /**
+   * By default the Matomo tracker assumes consent to tracking.
+   * To change this behavior so nothing is tracked until a user consents, you must call requireConsent.
+   */
+  requireConsent(): void {
+    try {
+      window._paq.push(['requireConsent']);
+    } catch (e) {
+      if (!(e instanceof ReferenceError)) {
+        throw e;
+      }
+    }
+  }
+
+  /**
+   * Marks that the current user has consented.<br />
+   * The consent is one-time only, so in a subsequent browser session, the user will have to consent again.<br />
+   * To remember consent, see the method below: rememberConsentGiven.
+   */
+  setConsentGiven(): void {
+    try {
+      window._paq.push(['setConsentGiven']);
+    } catch (e) {
+      if (!(e instanceof ReferenceError)) {
+        throw e;
+      }
+    }
+  }
+
+  /**
+   * Marks that the current user has consented, and remembers this consent through a browser cookie.<br />
+   * The next time the user visits the site, Matomo will remember that they consented, and track them.<br />
+   * If you call this method, you do not need to call setConsentGiven.
+   */
+  rememberConsentGiven(hoursToExpire: number): void {
+    try {
+      window._paq.push(['rememberConsentGiven', hoursToExpire]);
+    } catch (e) {
+      if (!(e instanceof ReferenceError)) {
+        throw e;
+      }
+    }
+  }
+
+  /**
+   * Removes a user's consent, both if the consent was one-time only and if the consent was remembered.<br />
+   * After calling this method, the user will have to consent again in order to be tracked.
+   */
+  forgetConsentGiven(): void {
+    try {
+      window._paq.push(['forgetConsentGiven']);
+    } catch (e) {
+      if (!(e instanceof ReferenceError)) {
+        throw e;
+      }
+    }
+  }
+
+  /**
    * Disables all first party cookies.<br />
    * Existing Matomo cookies for this websites will be deleted on the next page view.
    */
@@ -1297,9 +1453,9 @@ export class MatomoTracker {
     return new Promise((resolve, reject) => {
       try {
         window._paq.push([
-          function() {
+          function () {
             resolve(this.hasCookies());
-          }
+          },
         ]);
       } catch (e) {
         if (!(e instanceof ReferenceError)) {
@@ -1359,7 +1515,7 @@ export class MatomoTracker {
   }
 
   /**
-   * Set to true to enable the Secure cookie flag on all first party cookies.<br />
+   * Sets if or not to enable the Secure cookie flag on all first party cookies.<br />
    * This should be used when your website is only available under HTTPS so that all tracking cookies are always sent
    * over secure connection.
    *
@@ -1440,14 +1596,14 @@ export class MatomoTracker {
   }
 
   /**
-   * Sets the request method to either "GET" or "POST". (The default is "GET".)<br />
+   * Sets the request method to either 'GET' or 'POST'. (The default is 'GET'.)<br />
    * To use the POST request method, either:<br />
    * 1) the Matomo host is the same as the tracked website host (Matomo installed in the same domain as your tracked website), or<br />
    * 2) if Matomo is not installed on the same host as your website, you need to enable CORS (Cross domain requests).
    *
    * @param method HTTP method for sending information to the Matomo server.
    */
-  setRequestMethod(method: string): void {
+  setRequestMethod(method: 'GET' | 'POST'): void {
     try {
       window._paq.push(['setRequestMethod', method]);
     } catch (e) {
@@ -1475,13 +1631,43 @@ export class MatomoTracker {
 
   /**
    * Sets request Content-Type header value.<br />
-   * Applicable when "POST" request method is used via setRequestMethod.
+   * Applicable when 'POST' request method is used via setRequestMethod.
    *
    * @param contentType Value for Content-Type HTTP header.
    */
   setRequestContentType(contentType: string): void {
     try {
       window._paq.push(['setRequestContentType', contentType]);
+    } catch (e) {
+      if (!(e instanceof ReferenceError)) {
+        throw e;
+      }
+    }
+  }
+
+  /**
+   * Disables the feature which groups together multiple tracking requests and send them as a bulk POST request.<br />
+   * Disabling this feature is useful when you want to be able to replay all logs: one must use disableQueueRequest
+   * to disable this behavior to later be able to replay logged Matomo logs (otherwise a subset of the requests
+   * wouldn't be able to be replayed).
+   */
+  disableQueueRequest() {
+    try {
+      window._paq.push(['disableQueueRequest']);
+    } catch (e) {
+      if (!(e instanceof ReferenceError)) {
+        throw e;
+      }
+    }
+  }
+
+  /**
+   * Execute a custom command on the Matomo tracker script. This is here in case
+   * the Matomo API receives new endpoints but this package is not updated.
+   */
+  _customMatomoCommand(command: string, args: any[] = []) {
+    try {
+      window._paq.push([command, ...args]);
     } catch (e) {
       if (!(e instanceof ReferenceError)) {
         throw e;
