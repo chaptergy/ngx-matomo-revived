@@ -1,6 +1,6 @@
 {
   "name": "ngx-matomo-revived",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "author": "Arnaud Mouronval <arnaud.mouronval@gmail.com>, Chaptergy <26956711+chaptergy@users.noreply.github.com>",
   "description": "Matomo (aka. Piwik) web analytics for applications based on Angular 11.",
   "keywords": [
@@ -16,14 +16,14 @@
     "url": "https://github.com/chaptergy/ngx-matomo-revived.git"
   },
   "dependencies": {
-    "tslib": "^2.2.0"
+    "tslib": "^2.0.0"
   },
   "peerDependencies": {
-    "@angular/common": "^11.2.9",
-    "@angular/core": "^11.2.9"
+    "@angular/common": "^11.0.0",
+    "@angular/core": "^11.0.0"
   },
   "optionalDependencies": {
-    "@angular/router": "^11.2.9",
-    "rxjs": "^6.6.7"
+    "@angular/router": "^11.0.0",
+    "rxjs": "^6.5.0"
   }
 }
