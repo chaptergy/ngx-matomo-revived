@@ -1660,4 +1660,18 @@ export class MatomoTracker {
       }
     }
   }
+
+  /**
+   * Execute a custom command on the Matomo tracker script. This is here in case
+   * the Matomo API receives new endpoints but this package is not updated.
+   */
+  _customMatomoCommand(command: string, args: any[] = []) {
+    try {
+      window._paq.push([command, ...args]);
+    } catch (e) {
+      if (!(e instanceof ReferenceError)) {
+        throw e;
+      }
+    }
+  }
 }
