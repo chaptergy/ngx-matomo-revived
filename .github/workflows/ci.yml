@@ -17,11 +17,23 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - uses: browser-actions/setup-firefox@latest
-      - name: npm install, lint, build, and test
+      - name: npm install
         run: |
           npm ci
+        env:
+          CI: true
+      - name: lint
+        run: |
           npm run lint
+        env:
+          CI: true
+      - name: build
+        run: |
           npm run build ngx-matomo-revived
+        env:
+          CI: true
+      - name: test
+        run: |
           npm run test-headless ngx-matomo-revived
           npm run test-headless demo
         env:

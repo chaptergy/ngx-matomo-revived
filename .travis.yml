@@ -3,7 +3,7 @@ node_js: '14'
 sudo: true
 
 addons:
-  chrome: stable
+  firefox: stable
 
 install:
   - npm ci
