@@ -11,11 +11,11 @@
     "web analytics"
   ],
   "license": "MIT",
-  "private": true,
   "repository": {
     "type": "git",
     "url": "https://github.com/chaptergy/ngx-matomo-revived.git"
   },
+  "files": ["dist/*"],
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -31,6 +31,7 @@
     "copy-license": "copyfiles ./LICENSE ./dist/ngx-matomo-revived",
     "copy-readme": "copyfiles ./README.md ./dist/ngx-matomo-revived",
     "copy-files": "npm run copy-license && npm run copy-readme",
+    "publish": "npm run build -- --prod && npm run copy-files && cd dist/ngx-matomo-revived && npm publish",
     "postinstall": "ngcc"
   },
   "dependencies": {
