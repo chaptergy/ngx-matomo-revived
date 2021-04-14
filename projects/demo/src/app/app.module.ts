@@ -11,7 +11,7 @@ import { AppComponent } from './app.component';
     {
       provide: MATOMO_CONFIGURATION,
       useValue: {
-        trackers: [{ siteId: 1, trackerUrl: 'http://ngx.matomo.cloud/' }],
+        trackers: [{ trackerUrl: 'http://ngx.matomo.cloud/', siteId: 1 }],
         scriptUrl: '//cdn.matomo.cloud/ngx.matomo.cloud/matomo.js',
       } as MatomoModuleConfiguration,
     },

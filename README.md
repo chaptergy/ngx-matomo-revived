@@ -35,7 +35,7 @@ import { MatomoModule, MatomoModuleConfiguration, MATOMO_CONFIGURATION } from 'n
     {
       provide: MATOMO_CONFIGURATION,
       useValue: {
-        trackers: [{ siteId: YOUR_SITE_ID, trackerUrl: YOUR_MATOMO_URL }],
+        trackers: [{ trackerUrl: YOUR_MATOMO_URL, siteId: YOUR_SITE_ID }],
       } as MatomoModuleConfiguration,
     },
   ],

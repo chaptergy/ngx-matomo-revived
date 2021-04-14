@@ -11,7 +11,7 @@ describe('Demo App', () => {
           isConsentRequired: false,
           enableLinkTracking: true,
           enableLinkTrackingValue: false,
-          trackers: [],
+          trackers: [{ trackerUrl: 'http://test.url', siteId: 1 }],
         },
       });
       TestBed.configureTestingModule({
