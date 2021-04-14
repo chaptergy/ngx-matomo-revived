@@ -55,7 +55,9 @@ export class MatomoInjector {
         case 1:
           mainTracker = this.configuration.trackers[0];
           this.validateTracker(mainTracker, 0);
-          if (!mainTracker.trackerUrl.endsWith('/')) mainTracker.trackerUrl += '/';
+          if (!mainTracker.trackerUrl.endsWith('/')) {
+            mainTracker.trackerUrl += '/';
+          }
           this.pushOrOverwrite('setTrackerUrl', [mainTracker.trackerUrl + 'matomo.php']);
           this.pushOrOverwrite('setSiteId', [mainTracker.siteId.toString()]);
         // falls through
@@ -66,7 +68,9 @@ export class MatomoInjector {
             } catch (e) {
               console.warn(e.message);
             }
-            if (!tracker.trackerUrl.endsWith('/')) mainTracker.trackerUrl += '/';
+            if (!tracker.trackerUrl.endsWith('/')) {
+              tracker.trackerUrl += '/';
+            }
             window._paq.push(['addTracker', tracker.trackerUrl + 'matomo.php', tracker.siteId.toString()]);
           });
       }
