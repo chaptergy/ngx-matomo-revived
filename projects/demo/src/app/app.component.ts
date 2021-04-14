@@ -17,7 +17,7 @@ export class AppComponent implements OnInit, AfterViewInit {
    * @param matomoTracker Instance of MatomoTracker provided by DI.
    */
   constructor(private matomoInjector: MatomoInjector, private matomoTracker: MatomoTracker) {
-    this.matomoInjector.init('http://ngx.matomo.cloud/', 1, '//cdn.matomo.cloud/ngx.matomo.cloud/matomo.js');
+    this.matomoInjector.init();
   }
 
   /**

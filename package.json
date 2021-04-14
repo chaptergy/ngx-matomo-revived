@@ -31,7 +31,6 @@
     "copy-license": "copyfiles ./LICENSE ./dist/ngx-matomo-revived",
     "copy-readme": "copyfiles ./README.md ./dist/ngx-matomo-revived",
     "copy-files": "npm run copy-license && npm run copy-readme",
-    "release": "standard-version",
     "postinstall": "ngcc"
   },
   "dependencies": {

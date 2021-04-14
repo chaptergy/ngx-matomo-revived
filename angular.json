@@ -136,7 +136,8 @@
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
             "protractorConfig": "projects/demo/e2e/protractor.conf.js",
-            "devServerTarget": "demo:serve"
+            "devServerTarget": "demo:serve",
+            "webdriverUpdate": true
           },
           "configurations": {
             "production": {
