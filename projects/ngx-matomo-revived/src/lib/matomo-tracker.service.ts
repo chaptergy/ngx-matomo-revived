@@ -243,13 +243,7 @@ export class MatomoTracker {
     contentTarget: string
   ): void {
     try {
-      window._paq.push([
-        'trackContentInteraction',
-        contentInteraction,
-        contentName,
-        contentPiece,
-        contentTarget,
-      ]);
+      window._paq.push(['trackContentInteraction', contentInteraction, contentName, contentPiece, contentTarget]);
     } catch (e) {
       if (!(e instanceof ReferenceError)) {
         throw e;
@@ -1199,12 +1193,7 @@ export class MatomoTracker {
    * @param productCategory Category of the viewed product.
    * @param price Price of the viewed product.
    */
-  setEcommerceView(
-    productSKU: string,
-    productName: string,
-    productCategory: string,
-    price: number
-  ): void {
+  setEcommerceView(productSKU: string, productName: string, productCategory: string, price: number): void {
     try {
       window._paq.push(['setEcommerceView', productSKU, productName, productCategory, price]);
     } catch (e) {
