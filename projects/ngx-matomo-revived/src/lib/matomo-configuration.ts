@@ -5,13 +5,13 @@ import { InjectionToken } from '@angular/core';
  */
 export interface MatomoModuleConfiguration {
   /**
-   * URL of the Matomo JS script to execute.
-   */
-  scriptUrl?: string;
-  /**
    * Array of trackers, each one of them being described by its URL and site id.
    */
-  trackers: Array<{ trackerUrl: string; siteId: number }>;
+  trackers: Tracker[];
+  /**
+   * URL of the Matomo JS script to execute. If none is given, the url of the first tracker will be used.
+   */
+  scriptUrl?: string;
   /**
    * If set to true, automatically track the app being started.
    */
@@ -28,6 +28,14 @@ export interface MatomoModuleConfiguration {
    * If set to true, user consent is required.
    */
   isConsentRequired?: boolean;
+}
+
+/**
+ * Representing a Matomo instance
+ */
+export interface Tracker {
+  trackerUrl: string;
+  siteId: number;
 }
 
 /**

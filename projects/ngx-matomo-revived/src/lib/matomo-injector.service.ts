@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@angular/core';
-import { MatomoModuleConfiguration, MATOMO_CONFIGURATION } from './matomo-configuration';
+import { MatomoModuleConfiguration, MATOMO_CONFIGURATION, Tracker } from './matomo-configuration';
 
 /**
  * Access to the global window variable.
@@ -48,31 +48,59 @@ export class MatomoInjector {
           }, 0);
         }
       }
+      let mainTracker: Tracker;
       switch (this.configuration.trackers.length) {
         case 0:
-          // TODO Throw an error if no tracker has been set.
-          break;
+          throw new Error('No Matomo trackers were specified! At least one is required.');
         case 1:
-          const mainTracker = this.configuration.trackers[0];
-          this.pushOrOverwrite('setTrackerUrl', [mainTracker.trackerUrl]);
+          mainTracker = this.configuration.trackers[0];
+          this.validateTracker(mainTracker, 0);
+          if (!mainTracker.trackerUrl.endsWith('/')) mainTracker.trackerUrl += '/';
+          this.pushOrOverwrite('setTrackerUrl', [mainTracker.trackerUrl + 'matomo.php']);
           this.pushOrOverwrite('setSiteId', [mainTracker.siteId.toString()]);
         // falls through
         default:
-          this.configuration.trackers
-            .slice(1)
-            .forEach((tracker) => window._paq.push(['addTracker', tracker.trackerUrl, tracker.siteId.toString()]));
+          this.configuration.trackers.slice(1).forEach((tracker, index) => {
+            try {
+              this.validateTracker(tracker, index + 1);
+            } catch (e) {
+              console.warn(e.message);
+            }
+            if (!tracker.trackerUrl.endsWith('/')) mainTracker.trackerUrl += '/';
+            window._paq.push(['addTracker', tracker.trackerUrl + 'matomo.php', tracker.siteId.toString()]);
+          });
       }
       const script = document.createElement('script');
       script.type = 'text/javascript';
       script.async = true;
       script.defer = true;
-      script.src = this.configuration.scriptUrl;
+      if (this.configuration.scriptUrl) {
+        script.src = this.configuration.scriptUrl;
+      } else {
+        script.src = mainTracker.trackerUrl + 'matomo.js';
+      }
       const firstScript = document.getElementsByTagName('script')[0];
       firstScript.parentNode.insertBefore(script, firstScript);
     } catch (e) {
       if (!(e instanceof ReferenceError)) {
         throw e;
       }
+    }
+  }
+
+  /**
+   * Validate, that a tracker contains valid data
+   * @param tracker The tracker to check
+   * @param index The index of the tracker used for the error message
+   */
+  private validateTracker(tracker: Tracker, index: number = 0) {
+    // If the tracker is falsy, it is invalid
+    if (!tracker.trackerUrl) {
+      throw new Error(`Matomo tracker at index ${index} has the invalid url '${tracker.trackerUrl}'`);
+    }
+    // If the site id is nullish, it is invalid
+    if (tracker.siteId == null) {
+      throw new Error(`Matomo tracker at index ${index} has the invalid site id '${tracker.siteId}'`);
     }
   }
 
