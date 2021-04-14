@@ -6,6 +6,7 @@ import { MatomoModuleConfiguration, MATOMO_CONFIGURATION } from './matomo-config
  */
 declare const window: {
   [key: string]: any;
+  _paq: any[];
   prototype: Window;
   new (): Window;
 };
@@ -37,13 +38,13 @@ export class MatomoInjector {
   init() {
     try {
       if (this.configuration?.isConsentRequired === true) {
-        window._paq.push(['requireConsent']);
+        this.pushOrOverwrite('requireConsent', []);
       }
       if (this.configuration?.trackAppStarting === true) {
-        window._paq.push(['trackPageView']);
+        this.pushOrOverwrite('trackPageView', []);
         if (this.configuration?.enableLinkTracking === true) {
           setTimeout(() => {
-            window._paq.push(['enableLinkTracking', this.configuration?.enableLinkTrackingValue ?? false]);
+            this.pushOrOverwrite('enableLinkTracking', [this.configuration?.enableLinkTrackingValue ?? false]);
           }, 0);
         }
       }
@@ -53,8 +54,8 @@ export class MatomoInjector {
           break;
         case 1:
           const mainTracker = this.configuration.trackers[0];
-          window._paq.push(['setTrackerUrl', mainTracker.trackerUrl]);
-          window._paq.push(['setSiteId', mainTracker.siteId.toString()]);
+          this.pushOrOverwrite('setTrackerUrl', [mainTracker.trackerUrl]);
+          this.pushOrOverwrite('setSiteId', [mainTracker.siteId.toString()]);
         // falls through
         default:
           this.configuration.trackers
@@ -73,5 +74,18 @@ export class MatomoInjector {
         throw e;
       }
     }
+  }
+
+  /**
+   * Push a value to _paq or overwrite it if it already exists
+   */
+  private pushOrOverwrite(key: string, args: any[]) {
+    // Find an existing value and delete it if it exists
+    const existingIndex = window._paq.findIndex((value: any[]) => value[0] === key);
+    if (existingIndex !== -1) {
+      window._paq.splice(existingIndex, 1);
+    }
+
+    window._paq.push([key, ...args]);
   }
 }
